@@ -1,0 +1,44 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "抖音评论获取 - API出参",
+    "description": "抖音获取作品评论, API出参Schema详解",
+    "properties": {
+        "cid": {
+            "type": "string",
+            "description": "抖音评论ID"
+        },
+        "text": {
+            "type": "string",
+            "description": "抖音评论内容"
+        },
+        "create_time": {
+            "type": "number",
+            "description": "抖音评论发布时间戳"
+        },
+        "digg_count": {
+            "type": "number",
+            "description": "抖音评论点赞数"
+        },
+        "user_uid": {
+            "type": "string",
+            "description": "抖音评论者用户ID"
+        },
+        "user_nickname": {
+            "type": "string",
+            "description": "抖音评论者昵称"
+        },
+        "user_sec_uid": {
+            "type": "string",
+            "description": "抖音评论者SEC_UID"
+        },
+        "reply_comment_total": {
+            "type": "number",
+            "description": "抖音评论回复数"
+        },
+        "ip_label": {
+            "type": "string",
+            "description": "抖音评论者IP区域"
+        }
+    }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "douyin-content-engineer",
+  "version": "1.3.0",
+  "description": "抖音内容引擎 — AI驱动的内容电商助手。覆盖带货视频分析、竞品账号分析、抖音爆款视频挖掘、短视频爆款逻辑分析。提供4个能力：①关键词搜索（可按点赞/最新排序、时间窗、时长、图文类型筛选）②博主主页作品抓取 ③视频/图文评论抓取 ④实时热榜。当用户提到获取抖音作品、爬取抖音作品列表、查看抖音视频、抖音内容采集、抓取抖音作品时使用。支持关键词搜索排序、博主作品抓取、实时热榜获取，适用于短视频营销、竞品分析和热点监控，助力爆款内容策划与流量追踪。",
+  "keywords": [
+    "douyin",
+    "search",
+    "hot",
+    "keyword",
+    "content-analysis",
+    "competitor-analysis"
+  ],
+  "author": "um-why",
+  "license": "MIT",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=16.14.0"
+  },
+  "scripts": {
+    "search": "node src/douyin/search-cli.js",
+    "post": "node src/douyin/post-cli.js",
+    "comment": "node src/douyin/comment-cli.js",
+    "hot": "node src/douyin/hot-cli.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/um-why/douyin-search-openclaw.git"
+  }
+}

@@ -1,0 +1,67 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "抖音关键词搜索 - 命令行入参",
+    "description": "抖音实时关键词搜索, 命令行参数入参Schema详解",
+    "required": [
+        "keyword"
+    ],
+    "properties": {
+        "keyword": {
+            "type": "string",
+            "description": "抖音关键词搜索的关键词",
+            "minLength": 2,
+            "maxLength": 50
+        },
+        "sort": {
+            "type": "number",
+            "description": "排序方式: 0=综合排序 , 1=最多点赞 , 2=最新发布",
+            "default": 0,
+            "enum": [
+                0,
+                1,
+                2
+            ]
+        },
+        "time": {
+            "type": "number",
+            "description": "时间范围: 0=全部 , 1=一天内 , 7=七天内 , 180=半年内",
+            "default": 0,
+            "enum": [
+                0,
+                1,
+                7,
+                180
+            ]
+        },
+        "duration": {
+            "type": "number",
+            "description": "视频时长: 0=不限 , 1=1分钟以下 , 2=1-5分钟 , 3=5分钟以上",
+            "default": 0,
+            "enum": [
+                0,
+                1,
+                2,
+                3
+            ]
+        },
+        "content": {
+            "type": "number",
+            "description": "内容类型, 0: 不限, 1: 视频, 2: 图文",
+            "default": 0,
+            "enum": [
+                0,
+                1,
+                2
+            ]
+        },
+        "limit": {
+            "type": "number",
+            "description": "获取数量",
+            "minimum": 1,
+            "maximum": 10000,
+            "default": 10
+        }
+    },
+    "additionalProperties": false
+}

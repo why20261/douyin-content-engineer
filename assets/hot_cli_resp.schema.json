@@ -1,0 +1,43 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "抖音热榜 - API出参",
+    "description": "抖音实时热榜, API出参Schema详解",
+    "required": [
+        "word",
+        "event_time",
+        "hot_value",
+        "position",
+        "view_count"
+    ],
+    "properties": {
+        "id": {
+            "type": "number",
+            "description": "自增ID"
+        },
+        "word": {
+            "type": "string",
+            "description": "热榜关键词"
+        },
+        "event_time": {
+            "type": "number",
+            "description": "事件发生时间"
+        },
+        "hot_value": {
+            "type": "number",
+            "description": "热榜值"
+        },
+        "position": {
+            "type": "number",
+            "description": "热榜排名"
+        },
+        "view_count": {
+            "type": "number",
+            "description": "关键词的搜索量"
+        },
+        "event_time_format": {
+            "type": "string",
+            "description": "事件发生时间格式化字符串"
+        }
+    }
+}

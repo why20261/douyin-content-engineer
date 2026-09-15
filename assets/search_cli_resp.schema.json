@@ -1,0 +1,132 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "抖音关键词搜索 - API出参",
+    "description": "抖音实时关键词搜索, API出参Schema详解",
+    "properties": {
+        "aweme_id": {
+            "type": "string",
+            "description": "抖音视频ID"
+        },
+        "desc": {
+            "type": "string",
+            "description": "抖音视频描述"
+        },
+        "create_time": {
+            "type": "number",
+            "description": "抖音视频创建时间戳"
+        },
+        "author_uid": {
+            "type": "string",
+            "description": "视频作者抖音ID"
+        },
+        "author_nickname": {
+            "type": "string",
+            "description": "视频作者抖音昵称"
+        },
+        "author_avatar": {
+            "type": "string",
+            "description": "视频作者抖音头像"
+        },
+        "author_sec_uid": {
+            "type": "string",
+            "description": "视频作者抖音SEC_UID"
+        },
+        "author_signature": {
+            "type": "string",
+            "description": "视频作者抖音签名"
+        },
+        "comment_count": {
+            "type": "number",
+            "description": "抖音视频评论数"
+        },
+        "digg_count": {
+            "type": "number",
+            "description": "抖音视频点赞数"
+        },
+        "share_count": {
+            "type": "number",
+            "description": "抖音视频分享数"
+        },
+        "collect_count": {
+            "type": "number",
+            "description": "抖音视频收藏数"
+        },
+        "recommend_count": {
+            "type": "number",
+            "description": "交互界面未显示字段"
+        },
+        "share_url": {
+            "type": "string",
+            "description": "抖音视频分享URL"
+        },
+        "dynamic_cover": {
+            "type": "array",
+            "description": "抖音视频动态封面",
+            "items": {
+                "type": "string",
+                "description": "抖音视频动态封面URL"
+            }
+        },
+        "play_addr": {
+            "type": "string",
+            "description": "视频播放地址、视频下载地址"
+        },
+        "play_uri": {
+            "type": "string",
+            "description": "抖音视频播放URI"
+        },
+        "music_id": {
+            "type": "string",
+            "description": "抖音视频音乐ID"
+        },
+        "music_title": {
+            "type": "string",
+            "description": "抖音视频音乐标题"
+        },
+        "music_author": {
+            "type": "string",
+            "description": "抖音视频音乐作者"
+        },
+        "music_play_url": {
+            "type": "string",
+            "description": "抖音视频音乐播放URL"
+        },
+        "tags": {
+            "type": "array",
+            "description": "抖音视频标签",
+            "items": {
+                "type": "string",
+                "description": "抖音视频标签"
+            }
+        },
+        "url": {
+            "type": "string",
+            "description": "抖音视频URL"
+        },
+        "duration": {
+            "type": "number",
+            "description": "抖音视频时长"
+        },
+        "caption": {
+            "type": "string",
+            "description": "抖音视频标题"
+        },
+        "suggest_words": {
+            "type": "array",
+            "description": "抖音视频小蓝词",
+            "items": {
+                "type": "string",
+                "description": "抖音视频小蓝词"
+            }
+        },
+        "author_url": {
+            "type": "string",
+            "description": "视频作者抖音主页URL"
+        },
+        "create_time_str": {
+            "type": "string",
+            "description": "抖音视频创建时间"
+        }
+    }
+}
