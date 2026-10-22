@@ -46,9 +46,12 @@ function parseArgs(args, schema) {
   let i = 0;
   while (i < args.length) {
     const arg = args[i];
+    const eq = arg.indexOf("=");
+    const argName = eq > 0 ? arg.slice(0, eq) : arg;
+    const inlineValue = eq > 0 ? arg.slice(eq + 1) : undefined;
 
     // 帮助
-    if (arg === "--help" || arg === "-h") {
+    if (argName === "--help" || argName === "-h") {
       result._help = true;
       return result;
     }
@@ -56,7 +59,7 @@ function parseArgs(args, schema) {
     // 查找匹配的 flag
     let matched = null;
     for (const [flag, def] of Object.entries(schema.flags)) {
-      if (arg === flag || (def.alias && arg === def.alias)) {
+      if (argName === flag || (def.alias && argName === def.alias)) {
         matched = { flag, def };
         break;
       }
@@ -71,8 +74,13 @@ function parseArgs(args, schema) {
 
       if (def.type === "boolean") {
         result[def.key] = true;
+      } else if (inlineValue !== undefined) {
+        if (inlineValue === "" || inlineValue.startsWith("-")) {
+          throw new Error(`参数 ${argName} 缺少有效值`);
+        }
+        result[def.key] = def.transform ? def.transform(inlineValue) : inlineValue;
       } else {
-        const rawValue = readValueAfterFlag(args, i, arg);
+        const rawValue = readValueAfterFlag(args, i, argName);
         result[def.key] = def.transform ? def.transform(rawValue) : rawValue;
         i++;
       }

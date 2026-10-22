@@ -1,14 +1,16 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "title": "抖音热榜 - API出参",
-    "description": "抖音实时热榜, API出参Schema详解",
+    "title": "抖音热榜 - results 元素",
+    "description": "热榜成功时 results 数组中的一条。整份 stdout 见 output_envelope.schema.json，成功时 metadata.total 等于条数。",
     "required": [
+        "id",
         "word",
         "event_time",
         "hot_value",
         "position",
-        "view_count"
+        "view_count",
+        "event_time_format"
     ],
     "properties": {
         "id": {
@@ -21,7 +23,7 @@
         },
         "event_time": {
             "type": "number",
-            "description": "事件发生时间"
+            "description": "事件发生时间，unix 秒"
         },
         "hot_value": {
             "type": "number",
@@ -37,7 +39,7 @@
         },
         "event_time_format": {
             "type": "string",
-            "description": "事件发生时间格式化字符串"
+            "description": "事件时间，格式如 2006-01-02 15:04:05"
         }
     }
 }

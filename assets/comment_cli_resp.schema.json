@@ -1,8 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "title": "抖音评论获取 - API出参",
-    "description": "抖音获取作品评论, API出参Schema详解",
+    "title": "抖音评论获取 - results 元素",
+    "description": "评论成功时 results 数组中的一条。空字符串和数字 0 可能不返回。整份 stdout 见 output_envelope.schema.json。",
     "properties": {
         "cid": {
             "type": "string",
@@ -14,7 +14,7 @@
         },
         "create_time": {
             "type": "number",
-            "description": "抖音评论发布时间戳"
+            "description": "发布时间，unix 秒"
         },
         "digg_count": {
             "type": "number",
@@ -39,6 +39,21 @@
         "ip_label": {
             "type": "string",
             "description": "抖音评论者IP区域"
+        },
+        "reply_comment": {
+            "type": "array",
+            "description": "回复列表。元素字段与本条评论相同",
+            "items": {
+                "type": "object"
+            }
+        },
+        "user_url": {
+            "type": "string",
+            "description": "评论者主页 URL。有 user_sec_uid 时由技能补上"
+        },
+        "create_time_str": {
+            "type": "string",
+            "description": "评论时间，格式如 2026/9/4 20:13:20。由 create_time（unix 秒）生成"
         }
     }
 }

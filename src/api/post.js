@@ -2,13 +2,20 @@
  * 抖音博主已发布作品模块
  */
 const constants = require("../config/constants");
-const { requestApi } = require("../utils/request");
+const { requestApi, pollTaskResult } = require("../utils/request");
 
 function processPostResults(data) {
-  if (!data || !Array.isArray(data.post) || data.post.length === 0) {
-    return data;
+  if (!data || typeof data !== "object" || Array.isArray(data)) {
+    return null;
   }
-  return data.post;
+  const result = {};
+  if (Array.isArray(data.post)) {
+    result.post = data.post;
+  }
+  if (data.user && typeof data.user === "object" && !Array.isArray(data.user)) {
+    result.user = data.user;
+  }
+  return result;
 }
 
 /**
@@ -41,28 +48,24 @@ async function createPostTask(token, url, limit) {
  * @param {string} token 技能令牌
  * @param {string} url 抖音博主主页URL
  * @param {number} limit 作品数量
- * @returns {Promise<Array>} 已发布作品数组
+ * @returns {Promise<{post?: Array, user?: Object}|null>} 作品列表与博主信息
  * @throws {Error} API调用失败时抛出错误
  */
 async function getPostTask(token, url, limit) {
   const params = {
-    _: Date.now(),
     url: url,
     limit: limit,
   };
-  const response = await requestApi(
-    "GET",
+  const response = await pollTaskResult(
     "/api/douyin/post/info",
     params,
-    null,
     token,
-    constants.QUERY_MAX_ATTEMPTS,
     "查询任务",
   );
   if (response.data) {
     return processPostResults(response.data);
   }
-  return [];
+  return null;
 }
 
 module.exports = {

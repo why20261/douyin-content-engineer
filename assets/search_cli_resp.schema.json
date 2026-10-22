@@ -1,8 +1,8 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "title": "抖音关键词搜索 - API出参",
-    "description": "抖音实时关键词搜索, API出参Schema详解",
+    "title": "抖音关键词搜索 - results 元素",
+    "description": "搜索成功时 results 数组中的一条。空字符串和数字 0 可能不返回。整份 stdout 见 output_envelope.schema.json。",
     "properties": {
         "aweme_id": {
             "type": "string",
@@ -14,7 +14,7 @@
         },
         "create_time": {
             "type": "number",
-            "description": "抖音视频创建时间戳"
+            "description": "发布时间，unix 秒"
         },
         "author_uid": {
             "type": "string",
@@ -47,6 +47,14 @@
         "share_count": {
             "type": "number",
             "description": "抖音视频分享数"
+        },
+        "play_count": {
+            "type": "number",
+            "description": "播放数"
+        },
+        "forward_count": {
+            "type": "number",
+            "description": "转发数"
         },
         "collect_count": {
             "type": "number",
@@ -92,6 +100,72 @@
             "type": "string",
             "description": "抖音视频音乐播放URL"
         },
+        "images": {
+            "type": "array",
+            "description": "图文图片 URL 列表",
+            "items": {
+                "type": "string",
+                "description": "图片 URL"
+            }
+        },
+        "cha_list": {
+            "type": "array",
+            "description": "话题列表",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "id": {
+                        "type": "string",
+                        "description": "话题 ID"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "话题名称"
+                    },
+                    "desc": {
+                        "type": "string",
+                        "description": "话题描述"
+                    }
+                }
+            }
+        },
+        "mix_id": {
+            "type": "string",
+            "description": "合集 ID"
+        },
+        "mix_name": {
+            "type": "string",
+            "description": "合集名称"
+        },
+        "comment_list": {
+            "type": "array",
+            "description": "外露评论",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "cid": {
+                        "type": "string",
+                        "description": "评论 ID"
+                    },
+                    "text": {
+                        "type": "string",
+                        "description": "评论内容"
+                    },
+                    "create_time": {
+                        "type": "number",
+                        "description": "评论时间，unix 秒"
+                    },
+                    "digg_count": {
+                        "type": "number",
+                        "description": "评论点赞数"
+                    },
+                    "nickname": {
+                        "type": "string",
+                        "description": "评论者昵称"
+                    }
+                }
+            }
+        },
         "tags": {
             "type": "array",
             "description": "抖音视频标签",
@@ -122,11 +196,11 @@
         },
         "author_url": {
             "type": "string",
-            "description": "视频作者抖音主页URL"
+            "description": "作者主页 URL。有 author_sec_uid 时由技能补上"
         },
         "create_time_str": {
             "type": "string",
-            "description": "抖音视频创建时间"
+            "description": "发布时间，北京时间，格式如 2026/9/4 20:13:20，月和日不补零。原数据没有该字段且 create_time 为非 0 的 unix 秒时由技能补上"
         }
     }
 }

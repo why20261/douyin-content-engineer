@@ -2,7 +2,8 @@
  * 抖音评论模块
  */
 const constants = require("../config/constants");
-const { requestApi } = require("../utils/request");
+const { requestApi, pollTaskResult } = require("../utils/request");
+const { formatUnixSeconds } = require("../utils/time");
 
 function processCommentResults(data) {
   if (!Array.isArray(data)) {
@@ -16,10 +17,12 @@ function processCommentResults(data) {
       processedItem.user_url = `https://www.douyin.com/user/${item.user_sec_uid}`;
     }
 
-    if (typeof item?.create_time === "number" && item.create_time) {
-      processedItem.create_time_str = new Date(
-        item.create_time * 1000,
-      ).toLocaleString();
+    if (
+      typeof item?.create_time === "number" &&
+      item.create_time &&
+      !item.create_time_str
+    ) {
+      processedItem.create_time_str = formatUnixSeconds(item.create_time);
     }
 
     return processedItem;
@@ -63,18 +66,14 @@ async function createCommentTask(token, url, limit) {
  */
 async function getCommentTask(token, url, limit) {
   const params = {
-    _: Date.now(),
     url: url,
     limit: limit,
   };
 
-  const response = await requestApi(
-    "GET",
+  const response = await pollTaskResult(
     "/api/douyin/comment/info",
     params,
-    null,
     token,
-    constants.QUERY_MAX_ATTEMPTS,
     "查询任务",
   );
 

@@ -3,9 +3,7 @@
  */
 
 const constants = require("../config/constants");
-const { getJson } = require("../utils/request");
-const { withRetry } = require("../utils/retry");
-const utils = require("../utils/utils");
+const { requestApi } = require("../utils/request");
 
 /**
  * 获取抖音热门榜结果
@@ -13,25 +11,19 @@ const utils = require("../utils/utils");
  * @returns {Promise<Array>} 热门榜结果数组
  * @throws {Error} API调用失败时抛出错误
  */
-async function getHotTask(token) {
-  return await withRetry(
-    async () => {
-      const res = await getJson(
-        "/api/douyin/hot-search",
-        { _: Date.now() },
-        token,
-      );
-      return res.data;
-    },
+async function getHotSearch(token) {
+  const response = await requestApi(
+    "GET",
+    "/api/douyin/hot-search",
+    {},
+    null,
+    token,
     constants.QUERY_MAX_ATTEMPTS,
-    (attempt, err) => {
-      utils.printError(
-        `【获取抖音热榜重试】 ${attempt + 1}/${constants.QUERY_MAX_ATTEMPTS} 次 - ${err.message}`,
-      );
-    },
+    "获取抖音热榜",
   );
+  return response.data;
 }
 
 module.exports = {
-  getHotTask,
+  getHotSearch,
 };

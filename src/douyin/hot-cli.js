@@ -1,26 +1,19 @@
 #!/usr/bin/env node
 
-const constants = require("../config/constants");
 const token = require("../utils/token");
 const hot = require("../api/hot");
 const utils = require("../utils/utils");
+const {
+  emitError,
+  emitEmpty,
+  printSuccessEnvelope,
+  emitUncaught,
+} = require("../utils/output");
 
-function emitError(command, code, message, exitCode, startTime) {
-  const payload = {
-    status: "error",
-    error_code: code,
-    message: message,
-    timestamp: new Date().toLocaleString(),
-    request: { command },
-    metadata: {
-      skill_version: constants.VERSION,
-      runtime_version: process.versions.node,
-      execution_time: Date.now() - startTime,
-    },
-    results: null,
-  };
-  process.stdout.write(JSON.stringify(payload, null, 2) + "\n");
-  process.exitCode = exitCode;
+function printHelp() {
+  process.stderr.write(
+    "用法: node src/douyin/hot-cli.js\n\n获取抖音实时热榜，无需参数。\n",
+  );
 }
 
 /**
@@ -28,6 +21,22 @@ function emitError(command, code, message, exitCode, startTime) {
  */
 async function main() {
   const startTime = Date.now();
+  const args = process.argv.slice(2);
+  if (args.includes("--help") || args.includes("-h")) {
+    printHelp();
+    return;
+  }
+  if (args.length > 0) {
+    printHelp();
+    emitError(
+      "hot",
+      "INVALID_ARGS",
+      `热榜不接受参数, 收到: ${args.join(" ")}`,
+      2,
+      startTime,
+    );
+    return;
+  }
   utils.printBanner();
 
   const tokenValue = token.skillToken(process.env.GUAIKEI_API_TOKEN);
@@ -35,7 +44,7 @@ async function main() {
     emitError(
       "hot",
       "AUTH_REQUIRED",
-      "GUAIKEI_API_TOKEN 未配置或无效, 请配置环境变量后重试; 可通过 https://www.guaikei.com 自助开通",
+      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符; 可通过 https://www.guaikei.com 自助开通",
       3,
       startTime,
     );
@@ -43,7 +52,7 @@ async function main() {
   }
   let hotTask = null;
   try {
-    hotTask = await hot.getHotTask(tokenValue);
+    hotTask = await hot.getHotSearch(tokenValue);
   } catch (error) {
     utils.printError(`获取抖音热榜失败: ${error.message}`);
     emitError(
@@ -57,47 +66,22 @@ async function main() {
   }
 
   if (!hotTask || !Array.isArray(hotTask) || hotTask.length === 0) {
-    utils.printError(`抖音热榜没有返回结果, 请稍后重试或联系开发者`);
-    const emptyOutput = {
-      status: "empty",
-      error_code: "NO_MATCH",
-      message: "没有找到最新的抖音热榜",
-      timestamp: new Date().toLocaleString(),
-      request: {
-        command: "hot",
-      },
-      metadata: {
-        skill_version: constants.VERSION,
-        runtime_version: process.versions.node,
-        execution_time: Date.now() - startTime,
-      },
-      results: null,
-    };
-    process.stdout.write(JSON.stringify(emptyOutput, null, 2) + "\n", () =>
-      process.exit(0),
-    );
+    utils.printInfo("没有找到最新的抖音热榜");
+    emitEmpty("没有找到最新的抖音热榜", startTime, { command: "hot" });
     return;
   }
 
-  // 输出热榜结果
-  const finalOutput = {
-    status: "success",
-    error_code: "OK",
-    message: "获取抖音热榜任务完成",
-    total: hotTask.length,
-    timestamp: new Date().toLocaleString(),
-    metadata: {
-      skill_version: constants.VERSION,
-      runtime_version: process.versions.node,
-      execution_time: Date.now() - startTime,
-    },
-    results: hotTask,
-  };
-  console.log(JSON.stringify(finalOutput, null, 2));
+  printSuccessEnvelope(
+    "获取抖音热榜任务完成",
+    startTime,
+    { command: "hot" },
+    hotTask,
+    hotTask.length,
+  );
   utils.printSuccess(`抖音热榜任务完成, 共 ${hotTask.length} 条记录`);
 }
 
 main().catch((error) => {
-  utils.printError(error.message);
-  process.exitCode = 1;
+  utils.printError(error.message || String(error));
+  emitUncaught("hot", error);
 });

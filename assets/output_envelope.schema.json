@@ -1,0 +1,134 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "type": "object",
+    "title": "命令输出信封",
+    "description": "四个命令 stdout 的统一结构。成功、空结果、错误都使用本信封。stderr 只有日志，不是本结构。",
+    "required": [
+        "status",
+        "error_code",
+        "message",
+        "timestamp",
+        "request",
+        "metadata",
+        "results"
+    ],
+    "properties": {
+        "status": {
+            "type": "string",
+            "enum": ["success", "empty", "error"],
+            "description": "success 为有结果；empty 为没有匹配内容，退出码仍为 0；error 为失败"
+        },
+        "error_code": {
+            "type": "string",
+            "description": "OK、NO_MATCH、INVALID_KEYWORD、INVALID_URL、INVALID_ARGS、AUTH_REQUIRED、AUTH_ERROR、TIMEOUT、NETWORK_ERROR、HTTP_5xx、API_ERROR、UNKNOWN，或接口返回的业务码字符串"
+        },
+        "message": {
+            "type": "string",
+            "description": "给人读的说明"
+        },
+        "timestamp": {
+            "type": "string",
+            "description": "输出时间，北京时间，格式如 2026/9/4 20:13:20，月和日不补零"
+        },
+        "request": {
+            "type": "object",
+            "description": "本次实际使用的参数。参数尚未解析成功时只有 command",
+            "required": ["command"],
+            "properties": {
+                "command": {
+                    "type": "string",
+                    "enum": ["search", "post", "comment", "hot"],
+                    "description": "命令名"
+                },
+                "keyword_raw": {
+                    "type": "string",
+                    "description": "搜索：用户原始关键词"
+                },
+                "keyword": {
+                    "type": "string",
+                    "description": "搜索：整理空白后实际使用的关键词"
+                },
+                "sort": {
+                    "type": "number",
+                    "description": "搜索：排序。0 综合，1 最多点赞，2 最新发布"
+                },
+                "time": {
+                    "type": "number",
+                    "description": "搜索：发布时间。0 全部，1 一天内，7 七天内，180 半年内"
+                },
+                "duration": {
+                    "type": "number",
+                    "description": "搜索：视频时长。0 不限，1 一分钟以下，2 一到五分钟，3 五分钟以上"
+                },
+                "content": {
+                    "type": "number",
+                    "description": "搜索：内容类型。0 不限，1 视频，2 图文"
+                },
+                "url_raw": {
+                    "type": "string",
+                    "description": "作品或评论：用户原始链接或 ID"
+                },
+                "url": {
+                    "type": "string",
+                    "description": "作品或评论：识别后的链接或 ID"
+                },
+                "limit": {
+                    "type": "number",
+                    "description": "搜索、评论为 1-10000；作品为 0-10000。参数尚未通过校验时可能缺此字段，或仍是用户传入的原值"
+                }
+            }
+        },
+        "metadata": {
+            "type": "object",
+            "required": ["skill_version", "runtime_version", "execution_time"],
+            "properties": {
+                "skill_version": {
+                    "type": "string",
+                    "description": "技能版本"
+                },
+                "runtime_version": {
+                    "type": "string",
+                    "description": "Node.js 版本"
+                },
+                "execution_time": {
+                    "type": "number",
+                    "description": "本次执行耗时，毫秒。未捕获异常时为 0"
+                },
+                "total": {
+                    "type": "number",
+                    "description": "仅热榜成功时出现，等于 results 的条数"
+                }
+            }
+        },
+        "results": {
+            "description": "error 与 empty 时为 null。搜索、评论、热榜成功时为数组，条目字段分别见 search_cli_resp、comment_cli_resp、hot_cli_resp。作品成功时为对象，字段见 post_cli_resp",
+            "oneOf": [
+                {
+                    "type": "null"
+                },
+                {
+                    "type": "array",
+                    "items": {
+                        "type": "object"
+                    }
+                },
+                {
+                    "type": "object",
+                    "properties": {
+                        "post": {
+                            "type": "array",
+                            "description": "作品列表。接口未返回时不出现",
+                            "items": {
+                                "type": "object"
+                            }
+                        },
+                        "user": {
+                            "type": "object",
+                            "description": "博主信息。接口未返回时不出现"
+                        }
+                    }
+                }
+            ]
+        }
+    }
+}

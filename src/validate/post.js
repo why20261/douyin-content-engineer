@@ -1,20 +1,6 @@
-const utils = require("../utils/utils");
+const { extractDouyinUrl } = require("./url");
 
-const DOUYIN_URL_RE =
-  /(?:https?:\/\/)?(?:www\.|v\.)?(?:douyin\.com|iesdouyin\.com)\/[^\s"'<>`\u4e00-\u9fff，。！？、；：（）【】]+/i;
-
-function extractDouyinUrl(raw) {
-  if (typeof raw !== "string") return null;
-  const m = raw.match(DOUYIN_URL_RE);
-  if (!m) return null;
-
-  let url = m[0];
-  url = url.split("?")[0].split("#")[0];
-  url = url.replace(/[\/.,;:!?"'，。！？；：、）】》]+$/g, "");
-  return url || null;
-}
-
-function douyinUserUrl(url) {
+function parseDouyinUser(url) {
   const extracted = extractDouyinUrl(url);
   if (extracted) {
     if (/\/user\//i.test(extracted) || /v\.douyin\.com\//i.test(extracted)) {
@@ -27,23 +13,21 @@ function douyinUserUrl(url) {
     .trim()
     .replace(/[^a-zA-Z0-9_-]/g, "");
   if (!s) return null;
-  if (!/^MS4wLj/.test(s) && s.length < 20) {
+  if (!/^MS4wLjA/.test(s)) {
     return null;
   }
   return s;
 }
 
-function optionFormat(limit) {
-  limit = Number(limit);
-  if (!Number.isFinite(limit)) limit = 10;
-  if (limit < 0 || limit > 10000) {
-    utils.printError("获取的作品数量必须在0-10000之间");
-    limit = 10;
+function assertPostLimit(limit) {
+  const n = Number(limit);
+  if (!Number.isInteger(n) || n < 0 || n > 10000) {
+    throw new Error(`作品数量 limit ${limit} 无效, 允许 0-10000 的整数`);
   }
-  return limit;
+  return n;
 }
 
 module.exports = {
-  douyinUserUrl,
-  optionFormat,
+  parseDouyinUser,
+  assertPostLimit,
 };

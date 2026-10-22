@@ -21,9 +21,15 @@ function isValidToken(token) {
  * @returns {string} 有效令牌
  */
 function skillToken(token) {
+  if (!token || typeof token !== "string" || !token.trim()) {
+    utils.printError(
+      "GUAIKEI_API_TOKEN 未配置。可通过 https://www.guaikei.com 自助开通后配置环境变量。",
+    );
+    return "";
+  }
   if (!isValidToken(token)) {
     utils.printError(
-      "GUAIKEI_API_TOKEN未配置或无效。可通过 https://www.guaikei.com 自助开通后配置环境变量。",
+      "GUAIKEI_API_TOKEN 格式无效。须为 16-256 位字母、数字、下划线或连字符。",
     );
     return "";
   }

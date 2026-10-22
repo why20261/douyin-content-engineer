@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const utils = require("./utils");
 
-async function taskWrite(filename, content) {
+async function writeResultLog(filename, content) {
   if (!filename || typeof filename !== "string") {
     utils.printError("日志文件名必须是非空字符串");
     return;
@@ -39,6 +39,21 @@ async function taskWrite(filename, content) {
   }
 }
 
+function resourceId(url) {
+  const s = String(url || "");
+  const user = s.match(/\/user\/([^/?#]+)/i);
+  if (user) return user[1];
+  const media = s.match(/\/(?:video|note)\/([^/?#]+)/i);
+  if (media) return media[1];
+  const share = s.match(/\/share\/(?:video|note)\/([^/?#]+)/i);
+  if (share) return share[1];
+  const short = s.match(/v\.douyin\.com\/([^/?#]+)/i);
+  if (short) return short[1];
+  const plain = s.replace(/[^a-zA-Z0-9_-]/g, "");
+  return plain.slice(0, 80) || "unknown";
+}
+
 module.exports = {
-  taskWrite,
+  writeResultLog,
+  resourceId,
 };

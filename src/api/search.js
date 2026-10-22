@@ -2,7 +2,8 @@
  * 抖音搜索模块
  */
 const constants = require("../config/constants");
-const { requestApi } = require("../utils/request");
+const { requestApi, pollTaskResult } = require("../utils/request");
+const { formatUnixSeconds } = require("../utils/time");
 
 /**
  * 处理搜索结果数据
@@ -26,9 +27,7 @@ function processSearchResults(data) {
       item.create_time &&
       !item.create_time_str
     ) {
-      processedItem.create_time_str = new Date(
-        item.create_time * 1000,
-      ).toLocaleString();
+      processedItem.create_time_str = formatUnixSeconds(item.create_time);
     }
 
     return processedItem;
@@ -100,7 +99,6 @@ async function getSearchTask(
   limit,
 ) {
   const params = {
-    _: Date.now(),
     keyword: keyword,
     sort_type: sort,
     publish_time: time,
@@ -109,13 +107,10 @@ async function getSearchTask(
     limit: limit,
   };
 
-  const response = await requestApi(
-    "GET",
+  const response = await pollTaskResult(
     "/api/douyin/general-search/info",
     params,
-    null,
     token,
-    constants.QUERY_MAX_ATTEMPTS,
     "查询任务",
   );
 

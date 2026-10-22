@@ -28,7 +28,7 @@ class NetworkError extends SkillError {
 
 class TimeoutError extends SkillError {
   constructor(message) {
-    super("TIMEOUT_ERROR", message);
+    super("TIMEOUT", message);
     this.name = "TimeoutError";
   }
 }

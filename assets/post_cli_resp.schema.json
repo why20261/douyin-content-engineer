@@ -1,95 +1,162 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
-    "title": "抖音博主作品获取 - API出参",
-    "description": "抖音实时获取博主作品, API出参Schema详解",
+    "title": "抖音博主作品获取 - results 对象",
+    "description": "作品成功时的 results。包含 post（作品列表）和 user（博主信息）。接口返回的 error 不会进入 stdout。空字符串和数字 0 可能不返回。整份 stdout 见 output_envelope.schema.json。",
     "properties": {
-        "aweme_id": {
-            "type": "string",
-            "description": "抖音视频ID"
-        },
-        "desc": {
-            "type": "string",
-            "description": "抖音视频描述"
-        },
-        "caption": {
-            "type": "string",
-            "description": "抖音视频标题"
-        },
-        "create_time": {
-            "type": "number",
-            "description": "抖音视频创建时间戳"
-        },
-        "music_title": {
-            "type": "string",
-            "description": "抖音视频音乐标题"
-        },
-        "music_author": {
-            "type": "string",
-            "description": "抖音视频音乐作者"
-        },
-        "music_duration": {
-            "type": "number",
-            "description": "抖音视频音乐时长"
-        },
-        "music_play_url": {
-            "type": "string",
-            "description": "抖音视频音乐播放URL"
-        },
-        "video_url": {
+        "post": {
             "type": "array",
-            "description": "视频播放地址、视频下载地址",
+            "description": "作品列表",
             "items": {
-                "type": "string",
-                "description": "视频播放地址、视频下载地址"
+                "type": "object",
+                "properties": {
+                    "aweme_id": {
+                        "type": "string",
+                        "description": "作品ID"
+                    },
+                    "desc": {
+                        "type": "string",
+                        "description": "作品描述"
+                    },
+                    "create_time": {
+                        "type": "number",
+                        "description": "发布时间，unix 秒"
+                    },
+                    "caption": {
+                        "type": "string",
+                        "description": "作品标题"
+                    },
+                    "recommend_count": {
+                        "type": "number",
+                        "description": "推荐数"
+                    },
+                    "comment_count": {
+                        "type": "number",
+                        "description": "评论数"
+                    },
+                    "digg_count": {
+                        "type": "number",
+                        "description": "点赞数"
+                    },
+                    "share_count": {
+                        "type": "number",
+                        "description": "分享数"
+                    },
+                    "collect_count": {
+                        "type": "number",
+                        "description": "收藏数"
+                    },
+                    "share_url": {
+                        "type": "string",
+                        "description": "分享URL"
+                    },
+                    "video_url": {
+                        "type": "array",
+                        "description": "视频URL列表",
+                        "items": {
+                            "type": "string",
+                            "description": "视频URL"
+                        }
+                    },
+                    "video_cover": {
+                        "type": "string",
+                        "description": "视频封面URL"
+                    },
+                    "video_duration": {
+                        "type": "number",
+                        "description": "视频时长"
+                    },
+                    "music_title": {
+                        "type": "string",
+                        "description": "音乐标题"
+                    },
+                    "music_author": {
+                        "type": "string",
+                        "description": "音乐作者"
+                    },
+                    "music_duration": {
+                        "type": "number",
+                        "description": "音乐时长"
+                    },
+                    "music_play_url": {
+                        "type": "string",
+                        "description": "音乐播放URL"
+                    },
+                    "tags": {
+                        "type": "array",
+                        "description": "标签列表",
+                        "items": {
+                            "type": "string",
+                            "description": "标签名称"
+                        }
+                    },
+                    "suggest_words": {
+                        "type": "array",
+                        "description": "小蓝词列表",
+                        "items": {
+                            "type": "string",
+                            "description": "小蓝词名称"
+                        }
+                    }
+                }
             }
         },
-        "video_cover": {
-            "type": "string",
-            "description": "抖音视频封面URL"
-        },
-        "video_duration": {
-            "type": "number",
-            "description": "抖音视频时长"
-        },
-        "recommend_count": {
-            "type": "number",
-            "description": "交互界面未显示字段"
-        },
-        "comment_count": {
-            "type": "number",
-            "description": "抖音视频评论数"
-        },
-        "digg_count": {
-            "type": "number",
-            "description": "抖音视频点赞数"
-        },
-        "share_count": {
-            "type": "number",
-            "description": "抖音视频分享数"
-        },
-        "collect_count": {
-            "type": "number",
-            "description": "抖音视频收藏数"
-        },
-        "tags": {
-            "type": "array",
-            "description": "抖音视频标签",
-            "items": {
-                "type": "string",
-                "description": "抖音视频标签"
-            }
-        },
-        "share_url": {
-            "type": "string",
-            "description": "抖音视频分享URL"
-        },
-        "suggest_words": {
-            "type": "array",
-            "description": "抖音视频小蓝词",
-            "items": {
-                "type": "string",
-                "description": "抖音视频小蓝词"
+        "user": {
+            "type": "object",
+            "description": "博主信息",
+            "properties": {
+                "nickname": {
+                    "type": "string",
+                    "description": "博主昵称"
+                },
+                "sec_uid": {
+                    "type": "string",
+                    "description": "博主SEC_UID"
+                },
+                "signature": {
+                    "type": "string",
+                    "description": "博主签名"
+                },
+                "uid": {
+                    "type": "string",
+                    "description": "博主ID"
+                },
+                "unique_id": {
+                    "type": "string",
+                    "description": "博主唯一ID"
+                },
+                "avatar": {
+                    "type": "string",
+                    "description": "博主头像URL"
+                },
+                "ip_location": {
+                    "type": "string",
+                    "description": "博主IP位置"
+                },
+                "aweme_count": {
+                    "type": "number",
+                    "description": "作品数"
+                },
+                "favoriting_count": {
+                    "type": "number",
+                    "description": ""
+                },
+                "follower_count": {
+                    "type": "number",
+                    "description": "粉丝数"
+                },
+                "following_count": {
+                    "type": "number",
+                    "description": "关注数"
+                },
+                "max_follower_count": {
+                    "type": "number",
+                    "description": ""
+                },
+                "total_favorited": {
+                    "type": "number",
+                    "description": "获赞数"
+                }
             }
         }
     }

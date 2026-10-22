@@ -69,6 +69,13 @@ node src/douyin/post-cli.js -u "https://www.douyin.com/user/MS4wLjABxxx" -l 0
 | `--limit` | `-l` | 获取评论数量                  | 1-10000 条 | 否   |   10   |
 | `--help`  | `-h` | 显示帮助信息                  |            | 否   |        |
 
+> **💡 评论链接说明**
+>
+> - 视频 ( 格式：<https://www.douyin.com/video/xxx> )
+> - 图文 ( 格式：<https://www.douyin.com/note/xxx> )
+> - 短链 ( 格式：<https://v.douyin.com/xxx> )
+> - 纯数字 aweme_id
+
 ```bash
 # **基础语法**
 node src/douyin/comment-cli.js --url "https://www.douyin.com/video/xxx"

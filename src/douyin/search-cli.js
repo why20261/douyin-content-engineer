@@ -1,12 +1,17 @@
 #!/usr/bin/env node
 
-const constants = require("../config/constants");
 const search = require("../api/search");
 const log = require("../utils/log");
 const token = require("../utils/token");
 const utils = require("../utils/utils");
 const validator = require("../validate/keyword");
 const { parseArgs, buildHelp } = require("../utils/args");
+const {
+  emitError,
+  emitEmpty,
+  printSuccessEnvelope,
+  emitUncaught,
+} = require("../utils/output");
 
 const SCHEMA = {
   flags: {
@@ -71,26 +76,8 @@ function printHelp() {
     ]) +
       "\n\n注意:\n" +
       "  - 关键词建议 2-50 个字符，不能是链接, 不含 < > \" ' &\n" +
-      "  - 所有参数都会自动清洗和验证",
+      "  - 排序、时间、时长、类型和数量若不在允许范围内，命令会直接失败，不会改成默认值后继续搜索",
   );
-}
-
-function emitError(command, code, message, exitCode, startTime, request) {
-  const payload = {
-    status: "error",
-    error_code: code,
-    message: message,
-    timestamp: new Date().toLocaleString(),
-    request: request || { command },
-    metadata: {
-      skill_version: constants.VERSION,
-      runtime_version: process.versions.node,
-      execution_time: Date.now() - startTime,
-    },
-    results: null,
-  };
-  process.stdout.write(JSON.stringify(payload, null, 2) + "\n");
-  process.exitCode = exitCode;
 }
 
 /**
@@ -102,7 +89,7 @@ async function main() {
   const args = process.argv.slice(2);
   if (args.length === 0) {
     printHelp();
-    process.exitCode = 2;
+    emitError("search", "INVALID_ARGS", "缺少命令参数", 2, startTime);
     return;
   }
 
@@ -130,7 +117,7 @@ async function main() {
   utils.printBanner();
   const keywordRaw = keyword;
   utils.printInfo(`原始关键词: ${keywordRaw}`);
-  keyword = validator.cleanKeyword(keyword);
+  keyword = validator.normalizeKeyword(keyword);
   if (!validator.isKeywordValid(keyword)) {
     emitError(
       "search",
@@ -152,13 +139,28 @@ async function main() {
     return;
   }
   utils.printInfo(`清洗后关键词: ${keyword}`);
-  [sort, time, duration, content, limit] = validator.optionFormat(
-    sort,
-    time,
-    duration,
-    content,
-    limit,
-  );
+  try {
+    [sort, time, duration, content, limit] = validator.assertSearchOptions(
+      sort,
+      time,
+      duration,
+      content,
+      limit,
+    );
+  } catch (error) {
+    utils.printError(error.message);
+    emitError("search", "INVALID_ARGS", error.message, 2, startTime, {
+      command: "search",
+      keyword_raw: keywordRaw,
+      keyword: keyword,
+      sort: sort,
+      time: time,
+      duration: duration,
+      content: content,
+      limit: limit,
+    });
+    return;
+  }
   utils.printInfo(
     `排序: ${sort}, 时间: ${time}, 时长: ${duration}, 类型: ${content}, 数量: ${limit}`,
   );
@@ -168,10 +170,19 @@ async function main() {
     emitError(
       "search",
       "AUTH_REQUIRED",
-      "GUAIKEI_API_TOKEN 未配置或无效, 请配置环境变量后重试; 可通过 https://www.guaikei.com 自助开通",
+      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符; 可通过 https://www.guaikei.com 自助开通",
       3,
       startTime,
-      { command: "search", keyword: keyword, limit: limit },
+      {
+        command: "search",
+        keyword_raw: keywordRaw,
+        keyword: keyword,
+        sort: sort,
+        time: time,
+        duration: duration,
+        content: content,
+        limit: limit,
+      },
     );
     return;
   }
@@ -219,71 +230,39 @@ async function main() {
     return;
   }
 
+  const searchRequest = {
+    command: "search",
+    keyword_raw: keywordRaw,
+    keyword: keyword,
+    sort: sort,
+    time: time,
+    duration: duration,
+    content: content,
+    limit: limit,
+  };
   if (!searchTask || !Array.isArray(searchTask) || searchTask.length === 0) {
-    utils.printError(`搜索任务没有返回结果, 请稍后重试或联系开发者`);
-    const emptyOutput = {
-      status: "empty",
-      error_code: "NO_MATCH",
-      message: "没有找到匹配的视频或图文内容",
-      timestamp: new Date().toLocaleString(),
-      request: {
-        command: "search",
-        keyword_raw: keywordRaw,
-        keyword: keyword,
-        sort: sort,
-        time: time,
-        duration: duration,
-        content: content,
-        limit: limit,
-      },
-      metadata: {
-        skill_version: constants.VERSION,
-        runtime_version: process.versions.node,
-        execution_time: Date.now() - startTime,
-      },
-      results: null,
-    };
-    process.stdout.write(JSON.stringify(emptyOutput, null, 2) + "\n", () =>
-      process.exit(0),
-    );
+    utils.printInfo("没有找到匹配的视频或图文内容");
+    emitEmpty("没有找到匹配的视频或图文内容", startTime, searchRequest);
     return;
   }
 
-  // 输出搜索结果
-  const finalOutput = {
-    status: "success",
-    error_code: "OK",
-    message: "搜索任务完成",
-    timestamp: new Date().toLocaleString(),
-    request: {
-      command: "search",
-      keyword_raw: keywordRaw,
-      keyword: keyword,
-      sort: sort,
-      time: time,
-      duration: duration,
-      content: content,
-      limit: limit,
-    },
-    metadata: {
-      skill_version: constants.VERSION,
-      runtime_version: process.versions.node,
-      execution_time: Date.now() - startTime,
-    },
-    results: searchTask,
-  };
-  console.log(JSON.stringify(finalOutput, null, 2));
+  const finalOutput = printSuccessEnvelope(
+    "搜索任务完成",
+    startTime,
+    searchRequest,
+    searchTask,
+  );
   utils.printSuccess(
     `搜索任务完成, 共返回 ${finalOutput.results.length} 条结果`,
   );
 
-  await log.taskWrite(
+  await log.writeResultLog(
     `${startTime}_${keyword}_${sort}_${time}_${duration}_${content}_search.json`,
     JSON.stringify(finalOutput, null, 2),
   );
 }
 
 main().catch((error) => {
-  utils.printError(error.message);
-  process.exitCode = 1;
+  utils.printError(error.message || String(error));
+  emitUncaught("search", error);
 });
