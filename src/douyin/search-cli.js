@@ -5,7 +5,7 @@ const log = require("../utils/log");
 const token = require("../utils/token");
 const utils = require("../utils/utils");
 const validator = require("../validate/keyword");
-const { parseArgs, buildHelp } = require("../utils/args");
+const { parseArgs, buildHelp, parseDecimalInteger } = require("../utils/args");
 const {
   emitError,
   emitEmpty,
@@ -27,7 +27,7 @@ const SCHEMA = {
       key: "sort",
       type: "number",
       default: 0,
-      transform: (v) => Number(v),
+      transform: parseDecimalInteger,
       desc: "排序依据, 0: 综合排序(默认), 1: 最多点赞, 2: 最新发布",
     },
     "--time": {
@@ -35,7 +35,7 @@ const SCHEMA = {
       key: "time",
       type: "number",
       default: 0,
-      transform: (v) => Number(v),
+      transform: parseDecimalInteger,
       desc: "发布时间, 0: 全部(默认), 1: 一天内, 7: 七天内, 180: 半年内",
     },
     "--duration": {
@@ -43,7 +43,7 @@ const SCHEMA = {
       key: "duration",
       type: "number",
       default: 0,
-      transform: (v) => Number(v),
+      transform: parseDecimalInteger,
       desc: "视频时长, 0: 不限(默认), 1: 1分钟以下, 2: 1-5分钟, 3: 5分钟以上",
     },
     "--content": {
@@ -51,7 +51,7 @@ const SCHEMA = {
       key: "content",
       type: "number",
       default: 0,
-      transform: (v) => Number(v),
+      transform: parseDecimalInteger,
       desc: "内容类型, 0: 不限(默认), 1: 视频, 2: 图文",
     },
     "--limit": {
@@ -59,7 +59,7 @@ const SCHEMA = {
       key: "limit",
       type: "number",
       default: 10,
-      transform: (v) => Number(v),
+      transform: parseDecimalInteger,
       desc: "搜索数量, 1-10000",
     },
   },
@@ -76,7 +76,8 @@ function printHelp() {
     ]) +
       "\n\n注意:\n" +
       "  - 关键词建议 2-50 个字符，不能是链接, 不含 < > \" ' &\n" +
-      "  - 排序、时间、时长、类型和数量若不在允许范围内，命令会直接失败，不会改成默认值后继续搜索",
+      "  - 排序、时间、时长、类型和数量若不在允许范围内，命令会直接失败，不会改成默认值后继续搜索\n" +
+      "  - 关键词以 - 开头时写成 --keyword=-AI，或在 -- 后面写位置参数",
   );
 }
 
@@ -170,7 +171,7 @@ async function main() {
     emitError(
       "search",
       "AUTH_REQUIRED",
-      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符; 可通过 https://www.guaikei.com 自助开通",
+      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符",
       3,
       startTime,
       {

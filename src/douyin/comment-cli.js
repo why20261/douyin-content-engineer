@@ -5,7 +5,7 @@ const log = require("../utils/log");
 const token = require("../utils/token");
 const utils = require("../utils/utils");
 const validator = require("../validate/comment");
-const { parseArgs, buildHelp } = require("../utils/args");
+const { parseArgs, buildHelp, parseDecimalInteger } = require("../utils/args");
 const {
   emitError,
   emitEmpty,
@@ -20,14 +20,14 @@ const SCHEMA = {
       key: "url",
       type: "string",
       required: true,
-      desc: "抖音视频(或图文)URL或aweme_id",
+      desc: "抖音视频/图文URL、v.douyin.com 短链或 aweme_id",
     },
     "--limit": {
       alias: "-l",
       key: "limit",
       type: "number",
       default: 10,
-      transform: (v) => Number(v),
+      transform: parseDecimalInteger,
       desc: "评论数量, 1-10000",
     },
   },
@@ -39,10 +39,11 @@ function printHelp() {
     buildHelp(SCHEMA, "node src/douyin/comment-cli.js <url> [选项]", [
       "node src/douyin/comment-cli.js https://www.douyin.com/video/xxx",
       "node src/douyin/comment-cli.js --url https://www.douyin.com/note/xxx --limit 20",
+      "node src/douyin/comment-cli.js --url https://v.douyin.com/xxx --limit 20",
       "node src/douyin/comment-cli.js -u xxx -l 100",
     ]) +
       "\n\n注意:\n" +
-      "  - 支持视频/图文链接 / v.douyin.com 短链 / aweme_id(纯数字), 自动剥离 query 参数\n" +
+      "  - 支持视频/图文链接 / iesdouyin 分享链 / v.douyin.com 短链 / aweme_id(纯数字), 自动剥离 query 参数\n" +
       "  - Windows cmd.exe 下请使用双引号\n",
   );
 }
@@ -115,7 +116,7 @@ async function main() {
     emitError(
       "comment",
       "AUTH_REQUIRED",
-      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符; 可通过 https://www.guaikei.com 自助开通",
+      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符",
       3,
       startTime,
       { command: "comment", url_raw: urlRaw, url: url },

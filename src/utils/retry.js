@@ -18,8 +18,8 @@ async function withRetry(fn, maxAttempts, errorHandler) {
       if (error && error.noRetry) {
         throw error;
       }
-      if (errorHandler) errorHandler(attempt, error);
       if (attempt < maxAttempts - 1) {
+        if (errorHandler) errorHandler(attempt, error);
         const delay = Math.min(
           Math.pow(2, attempt) * constants.RETRY_INTERVAL,
           60000,

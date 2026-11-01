@@ -3,6 +3,7 @@
  */
 
 const constants = require("../config/constants");
+const { SkillError } = require("../utils/errors");
 const { requestApi } = require("../utils/request");
 
 /**
@@ -18,9 +19,15 @@ async function getHotSearch(token) {
     {},
     null,
     token,
-    constants.QUERY_MAX_ATTEMPTS,
+    constants.CREATE_MAX_ATTEMPTS,
     "获取抖音热榜",
   );
+  if (response.data == null) {
+    return [];
+  }
+  if (!Array.isArray(response.data)) {
+    throw new SkillError("API_SCHEMA_CHANGED", "热榜结果格式异常", true);
+  }
   return response.data;
 }
 

@@ -2,11 +2,15 @@
  * 抖音博主已发布作品模块
  */
 const constants = require("../config/constants");
+const { SkillError } = require("../utils/errors");
 const { requestApi, pollTaskResult } = require("../utils/request");
 
 function processPostResults(data) {
   if (!data || typeof data !== "object" || Array.isArray(data)) {
-    return null;
+    throw new SkillError("API_SCHEMA_CHANGED", "作品结果格式异常", true);
+  }
+  if (typeof data.error === "string" && data.error) {
+    throw new SkillError("API_SCHEMA_CHANGED", data.error, true);
   }
   const result = {};
   if (Array.isArray(data.post)) {

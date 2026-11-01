@@ -2,7 +2,7 @@
     "$schema": "http://json-schema.org/draft-07/schema#",
     "type": "object",
     "title": "命令输出信封",
-    "description": "四个命令 stdout 的统一结构。成功、空结果、错误都使用本信封。stderr 只有日志，不是本结构。",
+    "description": "五个命令 stdout 的统一结构。成功、空结果、错误都使用本信封。stderr 只有日志，不是本结构。",
     "required": [
         "status",
         "error_code",
@@ -20,7 +20,7 @@
         },
         "error_code": {
             "type": "string",
-            "description": "OK、NO_MATCH、INVALID_KEYWORD、INVALID_URL、INVALID_ARGS、AUTH_REQUIRED、AUTH_ERROR、TIMEOUT、NETWORK_ERROR、HTTP_5xx、API_ERROR、UNKNOWN，或接口返回的业务码字符串"
+            "description": "OK、NO_MATCH、INVALID_KEYWORD、INVALID_URL、INVALID_ARGS、AUTH_REQUIRED、AUTH_ERROR、TIMEOUT、NETWORK_ERROR、HTTP_5xx、API_ERROR、API_SCHEMA_CHANGED、UNKNOWN，或接口返回的业务码字符串"
         },
         "message": {
             "type": "string",
@@ -37,7 +37,7 @@
             "properties": {
                 "command": {
                     "type": "string",
-                    "enum": ["search", "post", "comment", "hot"],
+                    "enum": ["search", "post", "comment", "detail", "hot"],
                     "description": "命令名"
                 },
                 "keyword_raw": {
@@ -101,7 +101,7 @@
             }
         },
         "results": {
-            "description": "error 与 empty 时为 null。搜索、评论、热榜成功时为数组，条目字段分别见 search_cli_resp、comment_cli_resp、hot_cli_resp。作品成功时为对象，字段见 post_cli_resp",
+            "description": "error 与 empty 时为 null。搜索、评论、热榜成功时为数组，条目字段分别见 search_cli_resp、comment_cli_resp、hot_cli_resp。博主作品成功时为对象，字段见 post_cli_resp。作品详情成功时为对象，字段见 detail_cli_resp",
             "oneOf": [
                 {
                     "type": "null"

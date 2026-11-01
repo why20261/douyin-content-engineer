@@ -1,3 +1,5 @@
+const { formatBeijingTime } = require("./time");
+
 /**
  * 通用工具函数模块
  */
@@ -29,7 +31,7 @@ function printLog(level, message) {
     ERROR: "\x1b[31m",
   };
   console.error(
-    `${colorMap[level] || ""}[${new Date().toLocaleString()}] [${level}] ${message}\x1b[0m`,
+    `${colorMap[level] || ""}[${formatBeijingTime(new Date())}] [${level}] ${message}\x1b[0m`,
   );
 }
 

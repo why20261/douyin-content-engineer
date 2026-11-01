@@ -1,7 +1,7 @@
 const fs = require("fs");
 const path = require("path");
 
-const FALLBACK_NAME = "douyin-skill";
+const FALLBACK_NAME = "douyin-search-keyword";
 
 let cached = null;
 function skillName() {

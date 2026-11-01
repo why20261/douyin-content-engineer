@@ -86,6 +86,33 @@ node src/douyin/comment-cli.js --url "https://www.douyin.com/video/xxx"
 node src/douyin/comment-cli.js --url "https://www.douyin.com/video/xxx" --limit 100
 ```
 
+## 📄 抖音作品详情
+
+一条视频或图文的文案、互动、作者和播放地址。不取评论，也不取博主作品列表。
+
+| 参数     | 缩写 | 作用                          | 可选值 | 必填 | 默认值 |
+| :------- | :--: | :---------------------------- | :----- | :--- | :----: |
+| `--url`  | `-u` | 抖音视频(或图文)URL或aweme_id |        | 是   |        |
+| `--help` | `-h` | 显示帮助信息                  |        | 否   |        |
+
+> **💡 详情链接说明**
+>
+> - 视频 ( 格式：<https://www.douyin.com/video/xxx> )
+> - 图文 ( 格式：<https://www.douyin.com/note/xxx> )
+> - 短链 ( 格式：<https://v.douyin.com/xxx> )
+> - iesdouyin 分享链（`/share/video/`、`/share/note/`）
+> - 纯数字 aweme_id
+
+```bash
+# **基础语法**
+node src/douyin/detail-cli.js --url "https://www.douyin.com/video/xxx"
+
+# **使用示例**
+
+# 获取视频 xxx 的详情
+node src/douyin/detail-cli.js --url "https://www.douyin.com/video/xxx"
+```
+
 ## 📡 抖音热搜榜单
 
 - 无需参数

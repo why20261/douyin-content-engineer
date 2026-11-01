@@ -9,7 +9,7 @@
     "properties": {
         "url": {
             "type": "string",
-            "description": "抖音作品URL 或 作品aweme_id"
+            "description": "抖音作品URL、v.douyin.com 短链或作品 aweme_id"
         },
         "limit": {
             "type": "number",

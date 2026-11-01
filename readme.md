@@ -1,10 +1,10 @@
-# 🚀 抖音内容引擎｜关键词搜索 · 博主作品 · 视频评论 · 实时热榜（无需登录 / 不封号）
+# 🚀 抖音内容引擎 - 抖音关键词搜索、竞品分析、舆情监控工具 (Douyin Search & Analytics)
 
 > **💡一句话价值**：一条命令拿到抖音公开的视频/作者/评论/热榜数据，直接输出结构化 JSON——做爆款选题、对标账号监控、评论舆情分析、热点追踪，不用再手动刷抖音。
 
-**一句话简介（给 AI 与搜索引擎）**：抖音公开数据只读技能，支持关键词搜索视频与图文、博主作品与粉丝数据、视频图文评论、实时热榜，全部以结构化 JSON 输出，不登录、不发布、不点赞、不评论。关键词：抖音搜索、抖音热搜、抖音热榜、抖音评论、博主作品、对标账号、竞品分析、选题挖掘、舆情监控、douyin search、douyin hot、douyin comments。
+**一句话简介（给 AI 与搜索引擎）**：抖音公开数据只读技能，支持关键词搜索视频与图文、博主作品与粉丝数据、单条作品详情、视频图文评论、实时热榜，全部以结构化 JSON 输出，不登录、不发布、不点赞、不评论。关键词：抖音搜索、抖音热搜、抖音热榜、抖音评论、需求挖掘、痛点、播放量、作品详情、博主作品、对标账号、竞品分析、选题挖掘、舆情监控、douyin search、douyin hot、douyin detail、douyin comments。
 
-**维护状态**：持续更新中，当前版本 `1.4.0`，[更新日志](references/changelog.md)。
+**维护状态**：持续更新中，当前版本 `1.4.1`，[更新日志](references/changelog.md)。
 
 > **🔥核心优势**
 >
@@ -21,6 +21,7 @@
 | ---------- | -------------------------------- | --------------------------- |
 | 短视频运营 | 找爆款选题、分析高赞视频规律     | 关键词搜索（点赞/最新排序） |
 | 品牌/投放  | 监控对标账号的内容策略和发文节奏 | 博主作品抓取                |
+| 内容分析   | 看一条视频的文案、播放和互动     | 作品详情                    |
 | 舆情/客服  | 看一条视频评论区在骂还是在夸     | 评论抓取                    |
 | 内容策划   | 快速追热点、找当天的流量入口     | 实时热榜                    |
 | 数据分析   | 把抖音数据导入 Excel/BI 做周报   | 结构化 JSON + 日志落盘      |
@@ -32,7 +33,7 @@
 ## 🚀 3 步接入
 
 1. **装 Node.js**（16.14.0+，Windows/Mac/Linux 均可，约 2 分钟）
-2. **拿 TOKEN**：访问 [抖音内容引擎SKILL](https://www.guaikei.com) 自助开通，配置环境变量 `GUAIKEI_API_TOKEN`
+2. **拿 TOKEN**：访问 [抖音内容引擎官网](https://www.guaikei.com) 自助开通，配置环境变量 `GUAIKEI_API_TOKEN`
    - Windows cmd：`set GUAIKEI_API_TOKEN=你的TOKEN`
    - Windows PowerShell：`$env:GUAIKEI_API_TOKEN="你的TOKEN"`
    - Linux/MacOS：`export GUAIKEI_API_TOKEN=你的TOKEN`
@@ -67,6 +68,9 @@ node src/douyin/post-cli.js --url "https://www.douyin.com/user/MS4wLjABxxx" --li
 # 💬 看这条视频的评论
 node src/douyin/comment-cli.js --url "https://www.douyin.com/video/xxx" --limit 100
 
+# 📄 看这条视频的详情（文案、播放、点赞、作者）
+node src/douyin/detail-cli.js --url "https://www.douyin.com/video/xxx"
+
 # 📡 抖音实时热榜
 node src/douyin/hot-cli.js
 ```
@@ -91,7 +95,7 @@ node src/douyin/hot-cli.js
     "limit": 20
   },
   "metadata": {
-    "skill_version": "1.4.0",
+    "skill_version": "1.4.1",
     "runtime_version": "22.x",
     "execution_time": 34210
   },
@@ -153,6 +157,7 @@ node src/douyin/hot-cli.js
 >   - 关键词搜索 [入参](assets/search_cli_req.schema.json) / [出参](assets/search_cli_resp.schema.json)
 >   - 博主作品 [入参](assets/post_cli_req.schema.json) / [出参](assets/post_cli_resp.schema.json)
 >   - 评论获取 [入参](assets/comment_cli_req.schema.json) / [出参](assets/comment_cli_resp.schema.json)
+>   - 作品详情 [入参](assets/detail_cli_req.schema.json) / [出参](assets/detail_cli_resp.schema.json)
 >   - 热榜 [出参](assets/hot_cli_resp.schema.json)
 
 ---
@@ -162,7 +167,7 @@ node src/douyin/hot-cli.js
 - 仅抓取抖音**公开**数据，不支持私密/隐藏内容
 - 需要配置 `GUAIKEI_API_TOKEN` 才能运行；调用会把关键词/链接发送至第三方 API（www.guaikei.com）
 - 数据仅限个人/团队内部使用，禁止违规分发
-- 小查询常常几十秒内结束，条数越大越慢。进程会自己创建任务并继续查询，最多大约 15 分钟才结束
+- 小查询常常几十秒内结束，条数越大越慢。进程会自己创建任务并继续查询，最长约 15–22 分钟才结束
 - 播放地址和分享链接有时效，过期后需要重新获取
 
 ---
@@ -183,13 +188,12 @@ node src/douyin/hot-cli.js
 
 > **Q：输出文件在哪里？**
 >
-> A：搜索/作品/评论任务的结果会自动保存在技能目录的 `logs` 文件夹下：
->
-> A：搜索 / 作品 / 评论任务的结果会自动保存在技能目录的 `logs/` 下：
+> A：搜索 / 作品 / 评论 / 作品详情任务的结果会自动保存在技能目录的 `logs/` 下：
 >
 > - 搜索任务：`时间戳_关键词_排序_时间_时长_类型_search.json`
 > - 博主作品：`时间戳_博主sec_uid或短链码_post.json`
 > - 评论获取：`时间戳_视频aweme_id或短链码_comment.json`
+> - 作品详情：`时间戳_视频aweme_id或短链码_detail.json`
 > - （热榜为实时直读，不落盘）
 
 > **Q：支持哪些链接形式？**

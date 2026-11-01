@@ -5,7 +5,7 @@ const post = require("../api/post");
 const token = require("../utils/token");
 const utils = require("../utils/utils");
 const validator = require("../validate/post");
-const { parseArgs, buildHelp } = require("../utils/args");
+const { parseArgs, buildHelp, parseDecimalInteger } = require("../utils/args");
 const {
   emitError,
   emitEmpty,
@@ -27,7 +27,7 @@ const SCHEMA = {
       key: "limit",
       type: "number",
       default: 10,
-      transform: (v) => Number(v),
+      transform: parseDecimalInteger,
       desc: "获取的作品数量, 0-10000",
     },
   },
@@ -124,7 +124,7 @@ async function main() {
     emitError(
       "post",
       "AUTH_REQUIRED",
-      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符; 可通过 https://www.guaikei.com 自助开通",
+      "GUAIKEI_API_TOKEN 未配置或格式无效。须为 16-256 位字母、数字、下划线或连字符",
       3,
       startTime,
       { command: "post", url_raw: urlRaw, url: url },

@@ -2,12 +2,13 @@
  * 抖音评论模块
  */
 const constants = require("../config/constants");
+const { SkillError } = require("../utils/errors");
 const { requestApi, pollTaskResult } = require("../utils/request");
 const { formatUnixSeconds } = require("../utils/time");
 
 function processCommentResults(data) {
   if (!Array.isArray(data)) {
-    return [];
+    throw new SkillError("API_SCHEMA_CHANGED", "评论结果格式异常", true);
   }
 
   return data.map((item) => {
